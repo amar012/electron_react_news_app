@@ -1,8 +1,9 @@
 import React from 'react';
-import {CardDeck, Card, CardBody, CardText, CardFooter, CardLink} from 'reactstrap';
+import {CardDeck, Card, CardBody, CardText, CardFooter, Button, ButtonGroup,
+	ButtonToolbar} from 'reactstrap';
 
 import {ArticleHead} from '../components/articleHead';
-import {getNews, urlUS, urlIN, urlPrefix} from '../news';
+import {getNews, urlUS, urlIN, urlPrefix, countries} from '../news';
 import {urlKey} from '../config/key';
 
 export class ArticleContainer extends React.Component {
@@ -28,13 +29,15 @@ export class ArticleContainer extends React.Component {
 */
 
     render() {
+	let newsButtons = [];
+	for (const [k,v] of Object.entries(countries)) {
+		newsButtons.push(<Button id={k} onClick={(e) => this.fetchNews(urlPrefix + e.target.innerText + urlKey)}>{v}</Button>)
+	}
 	return (
 	  <div>
 	    <CardDeck>
-		<div style={{display: "inline-block"}}>
-		<button style={{width: "48%", marginRight: "4%" }} onClick={(e) => this.fetchNews(urlPrefix + e.target.innerText + urlKey)}>US</button>
-		<button style={{width: "48%"}} onClick={() => this.fetchNews(urlIN)}>IN</button>
-		</div><br />
+		<ButtonToolbar className="mb-2"><ButtonGroup>{newsButtons}</ButtonGroup></ButtonToolbar>
+
 		{ 
 		    this.state.articles.map(article => 
 			<div><Card>

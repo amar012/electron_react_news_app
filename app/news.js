@@ -4,7 +4,7 @@ export const urlPrefix = "https://newsapi.org/v2/top-headlines?country=";
 
 export const urlAll = "https://newsapi.org/v2/everything?q=iphone&pageSize=100&language=en&sortBy=publishedAt&apiKey=aa07570a09784effb2253b36aad73601";
 
-export const countires = {'Australia':'au', 
+export const countries = {'Australia':'au', 
 			  'Canada': 'ca',
 			  'India': 'in', 
 			  'Ireland': 'ie',
