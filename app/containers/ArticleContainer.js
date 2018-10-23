@@ -13,7 +13,7 @@ export class ArticleContainer extends React.Component {
 	// this.showArticle = this.showArticle.bind(this);
     }
 
-    fetchNews(urlVar) {
+    async fetchNews(urlVar) {
 	fetch(urlVar).then(resp => resp.json()).then(res => res.articles).then(articles => this.setState({articles: articles}));
     }
 
