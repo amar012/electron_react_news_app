@@ -8,7 +8,7 @@ export const ArticleHead = ({article}) => {
 	if (articleTitle) {
 	    if (imgUrl && imgUrl.indexOf(".jpg") !== -1) {
 		return (
-		    <div><CardImg top src={imgUrl} /><CardImgOverlay className="text-warning"><strong>{articleTitle}</strong></CardImgOverlay></div>
+		    <div><CardImg style={{minHeight: 50}} top src={imgUrl} /><CardImgOverlay className="text-warning"><strong>{articleTitle}</strong></CardImgOverlay></div>
 		)
 	    }
 	    return (

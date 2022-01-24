@@ -1,14 +1,15 @@
+
+
 export const urlUS = "https://newsapi.org/v2/top-headlines?country=us&apiKey=aa07570a09784effb2253b36aad73601";
 export const urlIN = "https://newsapi.org/v2/top-headlines?country=in&apiKey=aa07570a09784effb2253b36aad73601";
-export const urlPrefix = "https://newsapi.org/v2/top-headlines?country=";
-
 export const urlAll = "https://newsapi.org/v2/everything?q=iphone&pageSize=100&language=en&sortBy=publishedAt&apiKey=aa07570a09784effb2253b36aad73601";
+export const urlPrefix = "https://newsapi.org/v2/top-headlines?country=";
 
 export const countries = {'Australia':'au', 
 			  'Canada': 'ca',
 			  'India': 'in', 
 			  'Ireland': 'ie',
-			  'Malasia': 'my',
+			  'Malaysia': 'my',
 			  'New Zealand': 'nz',
 			  'Nigeria': 'ng',
 			  'Philippines': 'ph', 

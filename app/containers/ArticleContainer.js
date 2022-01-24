@@ -1,6 +1,8 @@
 import React from 'react';
 import {CardDeck, Card, CardBody, CardText, CardFooter, Button, ButtonGroup,
-	ButtonToolbar} from 'reactstrap';
+	ButtonToolbar, UncontrolledTooltip} from 'reactstrap';
+import Tippy from '@tippy.js/react';
+// import 'tippy.js/dist/tippy.css';
 
 import {ArticleHead} from '../components/articleHead';
 import {getNews, urlUS, urlIN, urlPrefix, countries} from '../news';
@@ -9,13 +11,20 @@ import {urlKey} from '../config/key';
 export class ArticleContainer extends React.Component {
     constructor(props) {
 	super(props);
-	this.state = {articles: []};
+	this.state = {articles: [], toolTipOpen: false};
 	this.fetchNews = this.fetchNews.bind(this);
+	this.toggle = this.toggle.bind(this);
 	// this.showArticle = this.showArticle.bind(this);
     }
 
     async fetchNews(urlVar) {
 	fetch(urlVar).then(resp => resp.json()).then(res => res.articles).then(articles => this.setState({articles: articles}));
+    }
+
+    toggle() {
+	this.setState({
+	    toolTipOpen: !this.state.toolTipOpen
+	});
     }
 
 /*
@@ -30,14 +39,16 @@ export class ArticleContainer extends React.Component {
 
     render() {
 	let newsButtons = [];
+	let newsButtonTooltips =[];
 	for (const [k,v] of Object.entries(countries)) {
-		newsButtons.push(<Button id={k} onClick={(e) => this.fetchNews(urlPrefix + e.target.innerText + urlKey)}>{v}</Button>)
+		/* newsButtons.push(<span><Button data-toggle="tooltip" data-placement="auto" title={k} className="mx-1 bg-secondary text-light" size="sm" id={k} onClick={(e) => this.fetchNews(urlPrefix + e.target.textContent + urlKey)}><small>{v.toUpperCase()}</small></Button>
+				</span>); */
+		newsButtons.push(<Tippy arrow={true} arrowType="round" distance={2} size="small" content={k}><Button id={k} className="mx-1 bg-secondary text-light" size="sm" onClick={(e) => this.fetchNews(urlPrefix + e.target.textContent + urlKey)}><small>{v.toUpperCase()}</small></Button></Tippy>);
 	}
 	return (
 	  <div>
 	    <CardDeck>
 		<ButtonToolbar className="mb-2"><ButtonGroup>{newsButtons}</ButtonGroup></ButtonToolbar>
-
 		{ 
 		    this.state.articles.map(article => 
 			<div><Card>
@@ -49,7 +60,7 @@ export class ArticleContainer extends React.Component {
 					{article.author ? <span className="ml-auto font-weight-light"><small className="text-muted">{article.author} </small></span> : ''}
 				</CardFooter>
 		             </Card>
-			    <div><button className="btn btn-primary" onClick={() => window.open(article.url, "_blank")}>Read more ...</button></div><hr /><br />	
+			    <div><Button outline size="sm" color="danger" onClick={() => window.open(article.url, "_blank")}>Read more ...</Button></div><hr /><br />
 			</div>)
 	        }
 	    </CardDeck>

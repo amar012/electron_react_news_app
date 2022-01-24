@@ -1,3 +1,4 @@
 node_modules/
-key.js
+app/config/key.js
+news.js
 public/
