@@ -11,14 +11,16 @@ import {urlKey} from '../config/key';
 export class ArticleContainer extends React.Component {
     constructor(props) {
 	super(props);
-	this.state = {articles: [], toolTipOpen: false};
+	this.state = {articles: [], toolTipOpen: false, isFetchingArticles: false, country: ''};
 	this.fetchNews = this.fetchNews.bind(this);
 	this.toggle = this.toggle.bind(this);
 	// this.showArticle = this.showArticle.bind(this);
     }
 
     async fetchNews(urlVar) {
-	fetch(urlVar).then(resp => resp.json()).then(res => res.articles).then(articles => this.setState({articles: articles}));
+		this.setState({isFetchingArticles: true})
+		await fetch(urlVar).then(resp => resp.json()).then(res => res.articles).then(articles => this.setState({articles: articles}));
+		this.setState({isFetchingArticles: false})
     }
 
     toggle() {
@@ -43,28 +45,39 @@ export class ArticleContainer extends React.Component {
 	for (const [k,v] of Object.entries(countries)) {
 		/* newsButtons.push(<span><Button data-toggle="tooltip" data-placement="auto" title={k} className="mx-1 bg-secondary text-light" size="sm" id={k} onClick={(e) => this.fetchNews(urlPrefix + e.target.textContent + urlKey)}><small>{v.toUpperCase()}</small></Button>
 				</span>); */
-		newsButtons.push(<Tippy arrow={true} arrowType="round" distance={2} size="small" content={k}><Button id={k} className="mx-1 bg-secondary text-light" size="sm" onClick={(e) => this.fetchNews(urlPrefix + e.target.textContent + urlKey)}><small>{v.toUpperCase()}</small></Button></Tippy>);
+		newsButtons.push(<Tippy arrow={true} arrowType="round" distance={2} size="small" content={k}><Button id={k} className="mx-1 bg-secondary text-light" size="sm" 
+			onClick={(e) => {
+				this.fetchNews(urlPrefix + e.target.textContent + urlKey)
+				this.setState({country: k})
+			} }><small>{v.toUpperCase()}</small></Button></Tippy>);
 	}
-	return (
-	  <div>
-	    <CardDeck>
-		<ButtonToolbar className="mb-2"><ButtonGroup>{newsButtons}</ButtonGroup></ButtonToolbar>
-		{ 
-		    this.state.articles.map(article => 
-			<div><Card>
-			        <div><ArticleHead article={article} /></div>
-			        <div><CardBody className="mt-3">
-				    <CardText className="text-info">{typeof article.content !== 'undefined' ? article.content : "article content is undefined"}</CardText>
-				</CardBody></div>
-			        <CardFooter className="d-flex"><span className="mr-auto"><small  className="text-muted font-italic">{article.source.name}</small></span>
-					{article.author ? <span className="ml-auto font-weight-light"><small className="text-muted">{article.author} </small></span> : ''}
-				</CardFooter>
-		             </Card>
-			    <div><Button outline size="sm" color="danger" onClick={() => window.open(article.url, "_blank")}>Read more ...</Button></div><hr /><br />
-			</div>)
-	        }
-	    </CardDeck>
-	  </div>
-	)
+
+	if (this.state.isFetchingArticles === true) {
+		return (
+				<h5>Fetching Articles from <em>{`${this.state.country}...`}</em></h5>
+		)
+	} else {
+		return (
+			<div>
+				<CardDeck>
+				<ButtonToolbar className="mb-2"><ButtonGroup>{newsButtons}</ButtonGroup></ButtonToolbar>
+				{ 
+					this.state.articles.map(article => 
+					<div><Card>
+							<div><ArticleHead article={article} /></div>
+							<div><CardBody className="mt-3">
+							<CardText className="text-info">{typeof article.content !== 'undefined' ? article.content : "article content is undefined"}</CardText>
+						</CardBody></div>
+							<CardFooter className="d-flex"><span className="mr-auto"><small  className="text-muted font-italic">{article.source.name}</small></span>
+							{article.author ? <span className="ml-auto font-weight-light"><small className="text-muted">{article.author} </small></span> : ''}
+						</CardFooter>
+							</Card>
+						<div><Button outline size="sm" color="danger" onClick={() => window.open(article.url, "_blank")}>Read more ...</Button></div><hr /><br />
+					</div>)
+					}
+				</CardDeck>
+			</div>
+		)
+	}
     }
 }
