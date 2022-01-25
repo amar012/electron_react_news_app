@@ -11,7 +11,13 @@ import {urlKey} from '../config/key';
 export class ArticleContainer extends React.Component {
     constructor(props) {
 	super(props);
-	this.state = {articles: [], toolTipOpen: false, isFetchingArticles: false, country: ''};
+	this.state = {
+		articles: [], 
+		toolTipOpen: false, 
+		isFetchingArticles: false, 
+		country: '', 
+		isError: false
+	};
 	this.fetchNews = this.fetchNews.bind(this);
 	this.toggle = this.toggle.bind(this);
 	// this.showArticle = this.showArticle.bind(this);
@@ -19,7 +25,22 @@ export class ArticleContainer extends React.Component {
 
     async fetchNews(urlVar) {
 		this.setState({isFetchingArticles: true})
-		await fetch(urlVar).then(resp => resp.json()).then(res => res.articles).then(articles => this.setState({articles: articles}));
+		await fetch(urlVar)
+			.then(resp => {
+				// add error checking since only network error i.e. error above 400 & 500 are 
+				// thrown by native fetch
+				if (resp.status >= 200 && resp.status <= 299) {
+					return resp.json() 
+				} else {
+					throw new Error(resp.statusText)
+				}
+			})
+			.then(res => res.articles)
+			.then(articles => this.setState({articles: articles}))
+			.catch((error) => {
+				this.setState({ isError: true })
+				console.log(error)
+			});
 		this.setState({isFetchingArticles: false})
     }
 
@@ -55,6 +76,13 @@ export class ArticleContainer extends React.Component {
 	if (this.state.isFetchingArticles === true) {
 		return (
 				<h5>Fetching Articles from <em>{`${this.state.country}...`}</em></h5>
+		)
+	} else if(this.state.isError === true) {
+		return (
+			<div>
+				<h5>Error while fetching Articles from <em>{`${this.state.country}...`}</em></h5>
+				<Button onClick={e=> this.setState({isError: false})}>Back</Button>
+			</div>
 		)
 	} else {
 		return (
