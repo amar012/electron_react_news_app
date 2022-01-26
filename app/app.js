@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {ArticleContainer} from './containers/ArticleContainer';
+import {ArticleContainer} from './containers/articleContainer';
 
 class App extends React.Component {
     render() {

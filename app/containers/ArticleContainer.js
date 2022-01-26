@@ -1,12 +1,12 @@
 import React from 'react';
-import {CardDeck, Card, CardBody, CardText, CardFooter, Button, ButtonGroup,
-	ButtonToolbar, UncontrolledTooltip} from 'reactstrap';
+import { Button } from 'reactstrap';
 import Tippy from '@tippy.js/react';
-// import 'tippy.js/dist/tippy.css';
 
-import {ArticleHead} from '../components/articleHead';
-import {getNews, urlUS, urlIN, urlPrefix, countries} from '../news';
+import { urlPrefix, countries} from '../news';
 import {urlKey} from '../config/key';
+import { ErrorDisplayComponent } from '../components/errorDisplayComponent';
+import { IsLoadingComponent } from '../components/isLoadingComponent';
+import { ArticlesComponent } from '../components/ArticlesComponent';
 
 export class ArticleContainer extends React.Component {
     constructor(props) {
@@ -20,6 +20,7 @@ export class ArticleContainer extends React.Component {
 	};
 	this.fetchNews = this.fetchNews.bind(this);
 	this.toggle = this.toggle.bind(this);
+	this.handleError = this.handleError.bind(this);
 	// this.showArticle = this.showArticle.bind(this);
     }
 
@@ -45,20 +46,14 @@ export class ArticleContainer extends React.Component {
     }
 
     toggle() {
-	this.setState({
-	    toolTipOpen: !this.state.toolTipOpen
+		this.setState({
+	    	toolTipOpen: !this.state.toolTipOpen
 	});
     }
 
-/*
-    componentDidMount() {
-	this.fetchNews();
-    }
-
-    showArticle(artUrl) {
-	window.open(artUrl, "_blank");
-    }
-*/
+	handleError(){
+		this.setState({isError: false})
+	}
 
     render() {
 	let newsButtons = [];
@@ -75,36 +70,13 @@ export class ArticleContainer extends React.Component {
 
 	if (this.state.isFetchingArticles === true) {
 		return (
-				<h5>Fetching Articles from <em>{`${this.state.country}...`}</em></h5>
+				<IsLoadingComponent country={this.state.country} />
 		)
 	} else if(this.state.isError === true) {
-		return (
-			<div>
-				<h5>Error while fetching Articles from <em>{`${this.state.country}...`}</em></h5>
-				<Button onClick={e=> this.setState({isError: false})}>Back</Button>
-			</div>
-		)
+		return (<ErrorDisplayComponent handleError={this.handleError} country={this.state.country} />)
 	} else {
 		return (
-			<div>
-				<CardDeck>
-				<ButtonToolbar className="mb-2"><ButtonGroup>{newsButtons}</ButtonGroup></ButtonToolbar>
-				{ 
-					this.state.articles.map(article => 
-					<div><Card>
-							<div><ArticleHead article={article} /></div>
-							<div><CardBody className="mt-3">
-							<CardText className="text-info">{typeof article.content !== 'undefined' ? article.content : "article content is undefined"}</CardText>
-						</CardBody></div>
-							<CardFooter className="d-flex"><span className="mr-auto"><small  className="text-muted font-italic">{article.source.name}</small></span>
-							{article.author ? <span className="ml-auto font-weight-light"><small className="text-muted">{article.author} </small></span> : ''}
-						</CardFooter>
-							</Card>
-						<div><Button outline size="sm" color="danger" onClick={() => window.open(article.url, "_blank")}>Read more ...</Button></div><hr /><br />
-					</div>)
-					}
-				</CardDeck>
-			</div>
+			<ArticlesComponent newsButtons={newsButtons} articles={this.state.articles} />
 		)
 	}
     }
